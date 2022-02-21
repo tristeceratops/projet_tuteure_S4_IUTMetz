@@ -32,9 +32,9 @@ int main()
     do {
         // on demande à l'utilisateur quel fichier il veut ouvrir
 
-        printf("saisir le nom de fichier de données : ");
+        // printf("saisir le nom de fichier de données : ");
         // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_100.txt");
+        strcpy(nom, "./communes/communes_10.txt");
         err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
@@ -45,57 +45,74 @@ int main()
     srand((unsigned int)time(NULL));
 
     // on demande à l'utilisateur de quelle ville il veut partir
-    printf("ville de départ : \n");
-    scanf("%d", &depart);
+    // printf("ville de départ : \n");
+    // scanf("%d", &depart);
     
-    clock_start(&t1);
-
-    for (int i=0;i<10;i++) {
-        // initialisation de la liste des sommets visités
-        sommets_visites[i] = -1;
-    }
-
-    sommets_visites[0] = depart;
+    clock_start(&t1);    
     
-    for (int i=1; i<nombre_villes - 1; i++) 
-    {
-        int plus_petit = depart;
-        int valeur_plus_petit = 999;
+    for (int l=0; l<nombre_villes; l++) {
+        for (int i=0;i<nombre_villes - 1;i++) { // je sais pas pourquoi mais si on met pas -1 ca marche pas donc on laisse -1
+            // initialisation de la liste des sommets visités
+            sommets_visites[i] = -1;
+        }
 
-        for (int j=0; j<nombre_villes;j++)
+        depart = l;
+        sommets_visites[0] = l;
+
+        for (int i=1; i<nombre_villes - 1; i++) 
         {
-            if (valeur_plus_petit == 0) 
+            int plus_petit = depart;
+            int valeur_plus_petit = 999;
+
+            for (int j=0; j<nombre_villes;j++)
             {
-                printf("valeur modifiée\n");
-                plus_petit = 1;
-                valeur_plus_petit = G[depart][1];
-            } 
+                if (valeur_plus_petit == 0) 
+                {
+                    printf("valeur modifiée\n");
+                    plus_petit = 1;
+                    valeur_plus_petit = G[depart][1];
+                } 
 
-            if (!(aDejaEteVisite(sommets_visites, nombre_villes, j)) && G[depart][j] < valeur_plus_petit && G[depart][j] != 0) { 
-                valeur_plus_petit = G[depart][j];
-                plus_petit = j;
-
-            }
-        }
-
-        if (AFFICHAGE) {
-            printf("Le plus petit en partant de %d est %d\n", depart, plus_petit);
-        }
-
-        depart = plus_petit;
-        sommets_visites[i] = depart;
-
-        if (AFFICHAGE) {
-            for (int i=0; i<10; i++) {
-                printf("%d ", sommets_visites[i]);
+                if (!(aDejaEteVisite(sommets_visites, nombre_villes, j)) && G[depart][j] < valeur_plus_petit && G[depart][j] != 0) { 
+                    valeur_plus_petit = G[depart][j];
+                    plus_petit = j;
+                }
             }
 
-            printf("\n");
-        }        
+            if (AFFICHAGE) {
+                printf("Le plus petit en partant de %d est %d\n", depart, plus_petit);
+            }
+
+            depart = plus_petit;
+            sommets_visites[i] = depart;
+
+            if (AFFICHAGE) {
+                for (int i=0; i<nombre_villes; i++) {
+                    printf("%d ", sommets_visites[i]);
+                }
+
+                printf("\n");
+            }       
+        }
+
+        if (poidsMin(G, sommets_visites, nombre_villes) > valeur_meilleur_chemin) {
+            valeur_meilleur_chemin = poidsMin(G, sommets_visites, nombre_villes);
+            meilleur_chemin = sommets_visites;
+        }
+
+        // printf("poid: %d\n", poidsMin(G, sommets_visites, nombre_villes));
     }
 
     clock_end(&t2);
     print_clock(t1, t2);
+
+    printf("Le meilleur chemin est:\n");
+
+    for (int i=0; i<nombre_villes;i++) {
+        printf("%d ", meilleur_chemin[i]);
+    }
+
+    printf("avec un poids de: %d", valeur_meilleur_chemin);
 }
 
 int aDejaEteVisite(int* tab, int taille, int sommet) 
@@ -116,13 +133,14 @@ int aDejaEteVisite(int* tab, int taille, int sommet)
 int poidsMin(Graphe g, int * t, int taille)
 {
     int v = 0;
-    int i;
-    
-    for(i=0; i< taille-1; i++){
+    int i = 0;
+
+    // printf("taille: %d", taille);
+
+    for(i=0; i < (taille - 1); i++){
+        // printf("???: %d\n", g[t[i]][t[i+1]]);
         v = v + g[t[i]][t[i+1]];
     }
-
-    printf("dernier i: %d\n", i);
 
     v = v + g[t[i]][t[0]];
 

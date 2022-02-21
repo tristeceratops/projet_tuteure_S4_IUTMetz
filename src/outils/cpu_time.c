@@ -33,5 +33,5 @@ void clock_end(clock_t *t) {
 }
 
 void print_clock(clock_t t1, clock_t t2) {
-	printf("Le programme s'est éxécuté en %f ms", (double)(t2-t1)/(double)(CLOCKS_PER_SEC) * 1000);
+	printf("Le programme s'est éxécuté en %f ms.\n", (double)(t2-t1)/(double)(CLOCKS_PER_SEC) * 1000);
 }
