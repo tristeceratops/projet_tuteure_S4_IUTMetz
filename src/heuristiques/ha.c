@@ -4,167 +4,105 @@
 #include <time.h>
 #include <string.h>
 
-int rnd(int a, int b); // fonction qui retourne un entier au hasard entre a et b
-void permut(int * t, int taille); // fonction qui réalise une permutation des éléments de la table t 
-void affiche(int * t, int taille); // fonction qui affiche les éléments d'un tableau
-// définition du type Graphe comme un tableau à 2 dimensions
-// allocation dynamique faite au moment de la lecture des
-// données dans un fichier
-typedef int ** Graphe;
+#include "echange_sommets.h"
+#include "cpu_time.h"
+#include "lire_data.h"
+#include "permutation.h"
 
-// lecture des données dans un fichier et construction du graphe
-int lire_data(char * nom, Graphe * g, int *n, int *m);
-
-// affichage du graphe, i.e. du tableau des distances
-void affiche_km(int ** g, int n);
-int poidsMin(Graphe  g, int * t, int taille);
-
+#define AFFICHAGE 0
 
 int main()
 {
+    // pour calculer le temps d'éxécution
+    clock_t t1, t2;
+
+    // pour gérer les chemins
+    Graphe G = NULL;
+    int depart;
+    int *meilleur_chemin;
+    int valeur_meilleur_chemin = 999999;
+    int *sommets_visites;
+
+    int *chemin_ameliore;
+
+    // pour le fichier à lire
+    char nom[30];
+    int nombre_villes, m;
+    int err;
+
     int *tab;
     int *tab_min;
     
     int i, nb_perm;
-    clock_t t1, t2;
-    double cpu_perm;
-    char nom[30];
-    Graphe G = NULL;
-    int n, m;
-    int err;
     int v_min = -1; int v;
 
     do
     {
         printf("saisir le nom de fichier de données : ");
         // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_20.txt");
-        err = lire_data(nom, &G, &n, &m);
+        strcpy(nom, "./communes/communes_10.txt");
+        err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
 
-    tab_min = calloc(n, sizeof(int));
-    tab = calloc(n, sizeof(int));
+    chemin_ameliore = calloc(nombre_villes, sizeof(int));
+    tab_min = calloc(nombre_villes, sizeof(int));
+    tab = calloc(nombre_villes, sizeof(int));
 
-    for (int i=0; i<n; i++) {
+    for (int i=0; i<nombre_villes; i++) {
         tab[i] = i;
     }
-
-    affiche_km(G, n);
+    
+    if (AFFICHAGE) {
+        affiche_km(G, nombre_villes);
+    }
     
     srand((unsigned int)time(NULL));
-    printf("nombre de permutations à générer : ");
+    printf("nombre de permutations à générer :\n");
     scanf("%d", &nb_perm);
     
-    t1 = clock();
+    clock_start(&t1);
 
     for(i = 0; i < nb_perm; i++)
     {
-        permut(tab, n);
-        affiche(tab, n);
-        printf("\n");
-        v = poidsMin(G, tab, n);
+        permut(tab, nombre_villes);
+        // affiche(tab, nombre_villes);
+        v = poidsMin(G, tab, nombre_villes);
 
         if (v < v_min || v_min == -1)
         {
             v_min = v;
-            printf("%d \n", sizeof(tab));
-            memcpy(tab_min, tab, n * sizeof(int)); 
+            memcpy(tab_min, tab, nombre_villes * sizeof(int)); 
         }
     }
-
-    t2 = clock();
     
-    cpu_perm = (double)(t2-t1)/(double)(CLOCKS_PER_SEC);
-    printf("les %d permutations ont été générées en %f secondes\n", nb_perm, cpu_perm);
+ 
+    
+
+    memcpy(chemin_ameliore, tab_min, nombre_villes * sizeof(int));
+
+    
+    echange_sommets(G, chemin_ameliore, nombre_villes);
+    
+
+    clock_end(&t2);
+    print_clock(t1, t2);
+
+
     printf("la valeur minimum est : %d\n", v_min);
-
     printf("la liste des villes voyagés est : ");
-    
-    // for (int i = 0; i < sizeof(tab_min); i++)
-    for (int i = 0; i < n; i++)
+
+    for (int i = 0; i < nombre_villes; i++)
     {     
         printf("%d ", tab_min[i]);     
     }    
-}
 
-// Question : quel sera le résultat pour l'appel affiche(tab+1, 3) ?
-// Question : quel sera le résultat pour l'appel permut(tab+1, 3) ?
+    printf("\nAprès amélioration le nouveau chemin est :");
 
-int rnd(int a, int b)
-{
-    return a + rand() % (b + 1 - a);
-}
-
-int poidsMin(Graphe g, int * t, int taille)
-{
-    int v = 0;
-    int i;
-    
-    for(i=0; i< taille-1; i++){
-        v = v + g[t[i]][t[i+1]];
+    for (int i=0; i<nombre_villes; i++) {
+        printf("%d ", chemin_ameliore[i]);
     }
 
-    printf("dernier i: %d\n", i);
-
-    v = v + g[t[i]][t[0]];
-
-    return v;
+    printf(" de poids: %d.", poidsMin(G, chemin_ameliore, nombre_villes));
 }
 
-void permut(int * t, int taille)
-{
-    int i, j, yam;
-    for(i = 0; i < taille-1; i++)
-    {
-        j = rnd(i, taille-1);
-        yam = t[i];
-        t[i] = t[j];
-        t[j] = yam;
-    }
-}
-
-void affiche(int * t, int taille)
-{
-    int i;
-    for(i = 0; i < taille; i++) printf("%d ", t[i]);
-}
-
-int lire_data(char * nom, Graphe * g, int *n, int *m)
-{
-    char str[15];
-    int i, s1, s2, km;
-    FILE * f = fopen(nom, "r");
-    
-    if (f == NULL) return 0; // le fichier n'existe pas
-    
-    // la première ligne contient le nombre de sommets n et le nombre d'arêtes m
-    fgets(str, 15, f);
-    sscanf(str, "%d %d", n, m);
-    
-    // allocation dynamique d'un tableau n x n rempli de 0
-    *g = (int **)calloc(sizeof(int *), *n);
-    for (i = 0; i < *n; i++) (*g)[i] = (int *)calloc(sizeof(int), *n);
-
-    // lecture du fichier et remplissage du tableau G
-    for (i = 0; i < *m; i++)
-    {
-        fgets(str, 15, f);
-        sscanf(str, "%d %d %d", &s1, &s2, &km);
-        (*g)[s1][s2] = km;
-        (*g)[s2][s1] = km;
-    }
-    fclose(f);
-    return 1;
-}
-
-void affiche_km(Graphe g, int n)
-{
-    int i, j;
-    
-    for(i = 0; i < n; i++)
-    {
-        for(j = 0; j < n; j++) printf("%5d ", g[i][j]);
-        printf("\n");
-    }
-}

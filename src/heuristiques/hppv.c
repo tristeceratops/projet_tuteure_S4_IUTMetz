@@ -4,10 +4,11 @@
 #include <time.h>
 #include <string.h>
 
+#include "echange_sommets.h"
 #include "cpu_time.h"
 #include "lire_data.h"
 
-#define AFFICHAGE 0
+#define AFFICHAGE 1
 
 int poidsMin(Graphe  g, int * t, int taille);
 int aDejaEteVisite(int* tab, int taille, int sommet) ;
@@ -21,7 +22,7 @@ int main()
     Graphe G = NULL;
     int depart;
     int *meilleur_chemin;
-    int valeur_meilleur_chemin;
+    int valeur_meilleur_chemin = 999999;
     int *sommets_visites;
 
     // pour le fichier à lire
@@ -95,24 +96,32 @@ int main()
             }       
         }
 
-        if (poidsMin(G, sommets_visites, nombre_villes) > valeur_meilleur_chemin) {
+        if (poidsMin(G, sommets_visites, nombre_villes) < valeur_meilleur_chemin) {
+            printf("%d\n", poidsMin(G, sommets_visites, nombre_villes));
             valeur_meilleur_chemin = poidsMin(G, sommets_visites, nombre_villes);
-            meilleur_chemin = sommets_visites;
+            memcpy(meilleur_chemin, sommets_visites, nombre_villes * sizeof(int));
         }
+
 
         // printf("poid: %d\n", poidsMin(G, sommets_visites, nombre_villes));
     }
+
+    // meilleur_chemin[nombre_villes - 1] = meilleur_chemin[0];
 
     clock_end(&t2);
     print_clock(t1, t2);
 
     printf("Le meilleur chemin est:\n");
 
+
     for (int i=0; i<nombre_villes;i++) {
         printf("%d ", meilleur_chemin[i]);
     }
 
+
     printf("avec un poids de: %d", valeur_meilleur_chemin);
+
+    echange_sommets(G, meilleur_chemin, nombre_villes);
 }
 
 int aDejaEteVisite(int* tab, int taille, int sommet) 
@@ -130,19 +139,19 @@ int aDejaEteVisite(int* tab, int taille, int sommet)
     return res;
 }
 
-int poidsMin(Graphe g, int * t, int taille)
-{
-    int v = 0;
-    int i = 0;
+// int poidsMin(Graphe g, int * t, int taille)
+// {
+//     int v = 0;
+//     int i = 0;
 
-    // printf("taille: %d", taille);
+//     // printf("taille: %d", taille);
 
-    for(i=0; i < (taille - 1); i++){
-        // printf("???: %d\n", g[t[i]][t[i+1]]);
-        v = v + g[t[i]][t[i+1]];
-    }
+//     for(i=0; i < (taille - 1); i++){
+//         // printf("???: %d\n", g[t[i]][t[i+1]]);
+//         v = v + g[t[i]][t[i+1]];
+//     }
 
-    v = v + g[t[i]][t[0]];
+//     v = v + g[t[i]][t[0]];
 
-    return v;
-}
+//     return v;
+// }

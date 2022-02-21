@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "permutation.h"
+
 // int main()
 // {
 // 	int tab[] = {21,45,18,37,52,89,63,97,78,11};
