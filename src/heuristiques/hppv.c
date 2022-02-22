@@ -12,6 +12,7 @@
 
 int poidsMin(Graphe  g, int * t, int taille);
 int aDejaEteVisite(int* tab, int taille, int sommet) ;
+void afficher_chemin(int *chemin, int taille);
 
 int main()
 {
@@ -35,7 +36,7 @@ int main()
 
         // printf("saisir le nom de fichier de données : ");
         // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_10.txt");
+        strcpy(nom, "./communes/communes_12.txt");
         err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
@@ -52,20 +53,21 @@ int main()
     clock_start(&t1);    
     
     for (int l=0; l<nombre_villes; l++) {
-        for (int i=0;i<nombre_villes - 1;i++) { // je sais pas pourquoi mais si on met pas -1 ca marche pas donc on laisse -1
+        for (int i=0; i<nombre_villes; i++) { // je sais pas pourquoi mais si on met pas -1 ca marche pas donc on laisse -1
             // initialisation de la liste des sommets visités
+            
             sommets_visites[i] = -1;
         }
 
         depart = l;
         sommets_visites[0] = l;
 
-        for (int i=1; i<nombre_villes - 1; i++) 
+        for (int i=1; i<nombre_villes; i++) 
         {
             int plus_petit = depart;
             int valeur_plus_petit = 999;
 
-            for (int j=0; j<nombre_villes;j++)
+            for (int j=0; j<nombre_villes; j++)
             {
                 if (valeur_plus_petit == 0) 
                 {
@@ -88,22 +90,22 @@ int main()
             sommets_visites[i] = depart;
 
             if (AFFICHAGE) {
-                for (int i=0; i<nombre_villes; i++) {
-                    printf("%d ", sommets_visites[i]);
-                }
+                afficher_chemin(sommets_visites, nombre_villes);
 
                 printf("\n");
             }       
         }
 
         if (poidsMin(G, sommets_visites, nombre_villes) < valeur_meilleur_chemin) {
-            printf("%d\n", poidsMin(G, sommets_visites, nombre_villes));
+            // printf("%d\n", poidsMin(G, sommets_visites, nombre_villes));
+
             valeur_meilleur_chemin = poidsMin(G, sommets_visites, nombre_villes);
             memcpy(meilleur_chemin, sommets_visites, nombre_villes * sizeof(int));
         }
 
 
         // printf("poid: %d\n", poidsMin(G, sommets_visites, nombre_villes));
+        
     }
 
     // meilleur_chemin[nombre_villes - 1] = meilleur_chemin[0];
@@ -113,15 +115,12 @@ int main()
 
     printf("Le meilleur chemin est:\n");
 
-
     for (int i=0; i<nombre_villes;i++) {
         printf("%d ", meilleur_chemin[i]);
     }
 
-
     printf("avec un poids de: %d", valeur_meilleur_chemin);
 
-    echange_sommets(G, meilleur_chemin, nombre_villes);
 }
 
 int aDejaEteVisite(int* tab, int taille, int sommet) 
@@ -155,3 +154,12 @@ int aDejaEteVisite(int* tab, int taille, int sommet)
 
 //     return v;
 // }
+
+
+void afficher_chemin(int *chemin, int taille) {
+    for(int i=0; i<taille; i++) {
+        printf("%d ", chemin[i]);
+    }
+
+    printf("\n");
+}
