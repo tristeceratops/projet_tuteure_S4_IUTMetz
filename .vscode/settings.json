@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "lire_data.h": "c"
+        "lire_data.h": "c",
+        "decroisement.h": "c",
+        "permutation.h": "c"
     }
 }

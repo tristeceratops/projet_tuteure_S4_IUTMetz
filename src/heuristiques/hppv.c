@@ -36,7 +36,7 @@ int main()
 
         // printf("saisir le nom de fichier de données : ");
         // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_12.txt");
+        strcpy(nom, "./communes/communes_20.txt");
         err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
@@ -82,17 +82,17 @@ int main()
                 }
             }
 
-            if (AFFICHAGE) {
-                printf("Le plus petit en partant de %d est %d\n", depart, plus_petit);
+            if (AFFICHAGE && l == 9) {
+                printf("Le plus petit en partant de %d est %d = %d km\n ", depart, plus_petit, G[depart][plus_petit]);
             }
 
             depart = plus_petit;
             sommets_visites[i] = depart;
 
             if (AFFICHAGE) {
-                afficher_chemin(sommets_visites, nombre_villes);
+                // afficher_chemin(sommets_visites, nombre_villes);
 
-                printf("\n");
+                // printf("\n");
             }       
         }
 
@@ -103,9 +103,7 @@ int main()
             memcpy(meilleur_chemin, sommets_visites, nombre_villes * sizeof(int));
         }
 
-
         // printf("poid: %d\n", poidsMin(G, sommets_visites, nombre_villes));
-        
     }
 
     // meilleur_chemin[nombre_villes - 1] = meilleur_chemin[0];

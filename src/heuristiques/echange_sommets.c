@@ -28,25 +28,23 @@ void echange_sommets(Graphe G, int *chemin, int taille) {
 
                 memcpy(chemin, chemin_temp, taille * sizeof(int));
 
-
                 // printf("\n\n\n%d < %d \n\n\n", poidsMin(G, chemin_temp, taille), poidsMin(G, chemin, taille));
             }
         }
     }
-
-    
 }
 
-int poidsMin(Graphe g, int * t, int taille) // 
+int poidsMin(Graphe G, int * t, int taille) // 
 {
     int v = 0;
     int i;
     
     for(i=0; i< taille-1; i++){
-        v = v + g[t[i]][t[i+1]];
+        // printf("total: %d\n", v);
+        v = v + G[t[i]][t[i+1]];
     }
 
-    v = v + g[t[i]][t[0]];
+    v = v + G[t[i]][t[0]];
 
     return v;
 }

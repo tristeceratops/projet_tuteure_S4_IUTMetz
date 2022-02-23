@@ -8,8 +8,12 @@
 #include "cpu_time.h"
 #include "lire_data.h"
 #include "permutation.h"
+#include "decroisement.h"
 
 #define AFFICHAGE 0
+
+
+void afficher_chemin(int *chemin, int taille);
 
 int main()
 {
@@ -75,14 +79,14 @@ int main()
             memcpy(tab_min, tab, nombre_villes * sizeof(int)); 
         }
     }
-    
- 
-    
 
+    printf("Chemin aléatoire:\n");
+    afficher_chemin(tab_min, nombre_villes);
+    
     memcpy(chemin_ameliore, tab_min, nombre_villes * sizeof(int));
-
     
-    echange_sommets(G, chemin_ameliore, nombre_villes);
+    // echange_sommets(G, chemin_ameliore, nombre_villes);
+    decroisement(G, chemin_ameliore, nombre_villes);
     
 
     clock_end(&t2);
@@ -105,4 +109,3 @@ int main()
 
     printf(" de poids: %d.", poidsMin(G, chemin_ameliore, nombre_villes));
 }
-
