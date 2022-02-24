@@ -70,6 +70,8 @@ void methodeDamien(int * tab, int taille,Graphe G) {
     memcpy(tabCopie,tab,taille);
     int a = 1;
     int pM = poidsMin2(G,tab,taille);
+    int pM2;
+    int * tabCopie2;
     for (int i = taille-1; i > 1; i--)
     {
         switchSommet(tab,i,i-1);
@@ -85,16 +87,10 @@ void methodeDamien(int * tab, int taille,Graphe G) {
             {
                 printf("poids = %d\n",poidsMin2(G,tab,taille));
                 //pM = poidsMin2(G,tab,taille);
-                h = 1;
+                pM2 = poidsMin2(G,tab,taille);
+                // memcpy(tabCopie2,tab,taille);
             }
-            if (h == 1)
-            {
-                pM = poidsMin2(G,tab,taille);
-            }
-            
-            
-            
-             
+  
         // }
         
         // if (arrayEqual(tab,tabCopie,taille))
@@ -105,6 +101,14 @@ void methodeDamien(int * tab, int taille,Graphe G) {
         // }
         
     }
+    printf("le poids minimum est : %d\n",pM2);
+    printf("Pour le parcours suivant\n");
+    // for (int i = 0; i < taille; i++)
+    // {
+    //     printf("%d",tabCopie2[i]);
+    // }
+    
+
     
 }
 
