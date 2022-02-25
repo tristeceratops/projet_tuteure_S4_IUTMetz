@@ -54,4 +54,5 @@ void affiche(int * t, int taille)
 {
 	int i;
 	for(i = 0; i < taille; i++) printf("%d ", t[i]);
+	printf("\n");
 }

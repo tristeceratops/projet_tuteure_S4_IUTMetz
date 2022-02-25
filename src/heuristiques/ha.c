@@ -11,8 +11,7 @@
 #include "decroisement.h"
 
 #define AFFICHAGE 0
-
-
+ 
 void afficher_chemin(int *chemin, int taille);
 
 int main()
@@ -44,7 +43,7 @@ int main()
     {
         printf("saisir le nom de fichier de données : ");
         // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_10.txt");
+        strcpy(nom, "./communes/communes_777.txt");
         err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
@@ -85,13 +84,12 @@ int main()
     
     memcpy(chemin_ameliore, tab_min, nombre_villes * sizeof(int));
     
-    // echange_sommets(G, chemin_ameliore, nombre_villes);
+    echange_sommets(G, chemin_ameliore, nombre_villes);
     decroisement(G, chemin_ameliore, nombre_villes);
+    // echange_sommets_recursif(G, chemin_ameliore, nombre_villes, nombre_villes - 1, nombre_villes - 1);
     
-
     clock_end(&t2);
     print_clock(t1, t2);
-
 
     printf("la valeur minimum est : %d\n", v_min);
     printf("la liste des villes voyagés est : ");
@@ -108,4 +106,13 @@ int main()
     }
 
     printf(" de poids: %d.", poidsMin(G, chemin_ameliore, nombre_villes));
+
+    FILE * f = fopen("chemin.txt", "w");
+
+    for (int i=0; i<nombre_villes;i++) {
+        // printf("%d ", tab_min[i]);
+        fprintf(f, "%d ", tab_min[i]);
+    }
+
+    fclose(f);
 }

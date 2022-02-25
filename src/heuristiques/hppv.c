@@ -7,12 +7,12 @@
 #include "echange_sommets.h"
 #include "cpu_time.h"
 #include "lire_data.h"
+#include "decroisement.h"
 
 #define AFFICHAGE 1
 
 int poidsMin(Graphe  g, int * t, int taille);
 int aDejaEteVisite(int* tab, int taille, int sommet) ;
-void afficher_chemin(int *chemin, int taille);
 
 int main()
 {
@@ -36,7 +36,7 @@ int main()
 
         // printf("saisir le nom de fichier de données : ");
         // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_20.txt");
+        strcpy(nom, "./communes/communes_100.txt");
         err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
@@ -82,8 +82,10 @@ int main()
                 }
             }
 
+
+            printf("%d\n", l);
             if (AFFICHAGE && l == 9) {
-                printf("Le plus petit en partant de %d est %d = %d km\n ", depart, plus_petit, G[depart][plus_petit]);
+                // printf("Le plus petit en partant de %d est %d = %d km\n ", depart, plus_petit, G[depart][plus_petit]);
             }
 
             depart = plus_petit;
@@ -108,14 +110,25 @@ int main()
 
     // meilleur_chemin[nombre_villes - 1] = meilleur_chemin[0];
 
+    // echange_sommets(G, meilleur_chemin, nombre_villes);
+    decroisement(G, meilleur_chemin, nombre_villes);
+    echange_sommets(G, meilleur_chemin, nombre_villes);
+    decroisement(G, meilleur_chemin, nombre_villes);
+    echange_sommets(G, meilleur_chemin, nombre_villes);
+
     clock_end(&t2);
     print_clock(t1, t2);
 
     printf("Le meilleur chemin est:\n");
 
+    FILE * f = fopen("./python/chemin.txt", "w");
+
     for (int i=0; i<nombre_villes;i++) {
         printf("%d ", meilleur_chemin[i]);
+        fprintf(f, "%d ", meilleur_chemin[i]);
     }
+
+    fclose(f);
 
     printf("avec un poids de: %d", valeur_meilleur_chemin);
 
@@ -153,11 +166,3 @@ int aDejaEteVisite(int* tab, int taille, int sommet)
 //     return v;
 // }
 
-
-void afficher_chemin(int *chemin, int taille) {
-    for(int i=0; i<taille; i++) {
-        printf("%d ", chemin[i]);
-    }
-
-    printf("\n");
-}
