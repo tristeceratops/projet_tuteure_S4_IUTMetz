@@ -1,5 +1,5 @@
 *.csv
 chemin.txt
 parse.py
-main.py
+# main.py
 __pycache__
