@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    </head>
+    
+    <body>
+        <style>
+            body {
+    margin: 0;
+}
+
+#map {
+    height: 100vh;
+}
+        </style>
+
+        <div id="map"></div>
+
+        <script>
+            
+            let map = L.map('map')
+                .setView([48.85667, 2.351944], 4);
+
+            L.tileLayer(
+                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+                {
+                    'attribution': 'OpenStreetMap contributors.'
+                }
+            )
+            .addTo(map);
+        
+            let depart = L.icon({
+                iconUrl: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/large-green-circle_1f7e2.png',
+                iconSize: [48, 48],
+            });
+        
+            let arrivee = L.icon({
+                iconUrl: 'https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/large-red-circle_1f534.png',
+                iconSize: [48, 48],
+            });
+        
+            L.polyline([[48.85667, 2.351944], [47.23163568, -1.548310086], [44.85724454, -0.573696781], [43.59638143, 1.431672934], [43.61344091, 3.868516579], [43.29990094, 5.382278698], [43.71199927, 7.238268895], [45.75778, 4.832222], [48.57126798, 7.767526795], [50.63171832, 3.047832723], ['48.85667', '2.351944']], {color: "red"}).addTo(map);
+        
+            L.marker([48.85667, 2.351944], {icon: depart})
+                .addTo(map)
+                .bindTooltip("48.85667, 2.351944"); 
+        
+            L.marker([50.63171832, 3.047832723], {icon: arrivee})
+                .addTo(map)
+                .bindTooltip("50.63171832, 3.047832723"); 
+        
+        </script>
+    </body>
+</html>

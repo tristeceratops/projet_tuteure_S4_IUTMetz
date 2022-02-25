@@ -2,6 +2,7 @@
     "files.associations": {
         "lire_data.h": "c",
         "decroisement.h": "c",
-        "permutation.h": "c"
+        "permutation.h": "c",
+        "echange_sommets.h": "c"
     }
 }

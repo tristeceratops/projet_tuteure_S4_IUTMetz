@@ -10,6 +10,9 @@
 #include "permutation.h"
 #include "decroisement.h"
 
+/*   Mettre 1 si on veut des affichages de ce qu'il se passe. 
+    /!\ Augmente beaucoup le temps d'éxécution. /!\ 
+ */
 #define AFFICHAGE 0
  
 void afficher_chemin(int *chemin, int taille);
@@ -19,46 +22,40 @@ int main()
     // pour calculer le temps d'éxécution
     clock_t t1, t2;
 
-    // pour gérer les chemins
-    Graphe G = NULL;
-    int depart;
-    int *meilleur_chemin;
-    int valeur_meilleur_chemin = 999999;
-    int *sommets_visites;
-
-    int *chemin_ameliore;
-
     // pour le fichier à lire
     char nom[30];
     int nombre_villes, m;
     int err;
 
-    int *tab;
-    int *tab_min;
-    
+    // pour gérer les chemins
+    Graphe G = NULL;
+    int *chemin;
+    int *meilleur_chemin;
+    int *chemin_ameliore;
+   
     int i, nb_perm;
     int v_min = -1; int v;
 
     do
     {
         printf("saisir le nom de fichier de données : ");
-        // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_777.txt");
+        scanf("%s", nom); while(getchar() != '\n');
+        // strcpy(nom, "./communes/communes_10.txt");
         err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
 
     chemin_ameliore = calloc(nombre_villes, sizeof(int));
-    tab_min = calloc(nombre_villes, sizeof(int));
-    tab = calloc(nombre_villes, sizeof(int));
+    meilleur_chemin = calloc(nombre_villes, sizeof(int));
+    chemin = calloc(nombre_villes, sizeof(int));
 
     for (int i=0; i<nombre_villes; i++) {
-        tab[i] = i;
+        chemin[i] = i;
     }
     
-    if (AFFICHAGE) {
-        affiche_km(G, nombre_villes);
-    }
+    // if (AFFICHAGE) {
+    //     affiche_km(G, nombre_villes);
+    // }
     
     srand((unsigned int)time(NULL));
     printf("nombre de permutations à générer :\n");
@@ -68,25 +65,27 @@ int main()
 
     for(i = 0; i < nb_perm; i++)
     {
-        permut(tab, nombre_villes);
-        // affiche(tab, nombre_villes);
-        v = poidsMin(G, tab, nombre_villes);
+        permut(chemin, nombre_villes);
+        // affiche(chemin, nombre_villes);
+        v = poidsMin(G, chemin, nombre_villes);
+
+        // if (AFFICHAGE) {
+        //     affiche(chemin, nombre_villes);
+        // }
 
         if (v < v_min || v_min == -1)
         {
             v_min = v;
-            memcpy(tab_min, tab, nombre_villes * sizeof(int)); 
+            memcpy(meilleur_chemin, chemin, nombre_villes * sizeof(int)); 
         }
     }
-
-    printf("Chemin aléatoire:\n");
-    afficher_chemin(tab_min, nombre_villes);
     
-    memcpy(chemin_ameliore, tab_min, nombre_villes * sizeof(int));
+    memcpy(chemin_ameliore, meilleur_chemin, nombre_villes * sizeof(int));
     
+    /*  Ci-dessous se trouve l'appel aux heuristiques d'amélioration d'échange de sommet et de décroisement. On peut effectuer ces deux heuristiques l'un après l'autre ou bien en laisser qu'un seul/
+     */
     echange_sommets(G, chemin_ameliore, nombre_villes);
     decroisement(G, chemin_ameliore, nombre_villes);
-    // echange_sommets_recursif(G, chemin_ameliore, nombre_villes, nombre_villes - 1, nombre_villes - 1);
     
     clock_end(&t2);
     print_clock(t1, t2);
@@ -96,7 +95,7 @@ int main()
 
     for (int i = 0; i < nombre_villes; i++)
     {     
-        printf("%d ", tab_min[i]);     
+        printf("%d ", meilleur_chemin[i]);     
     }    
 
     printf("\nAprès amélioration le nouveau chemin est :");
@@ -107,11 +106,11 @@ int main()
 
     printf(" de poids: %d.", poidsMin(G, chemin_ameliore, nombre_villes));
 
-    FILE * f = fopen("chemin.txt", "w");
+    FILE * f = fopen("./python/chemin.txt", "w");
 
     for (int i=0; i<nombre_villes;i++) {
-        // printf("%d ", tab_min[i]);
-        fprintf(f, "%d ", tab_min[i]);
+        // printf("%d ", meilleur_chemin[i]);
+        fprintf(f, "%d ", meilleur_chemin[i]);
     }
 
     fclose(f);

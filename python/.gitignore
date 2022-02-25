@@ -1,0 +1,5 @@
+*.csv
+chemin.txt
+parse.py
+main.py
+__pycache__

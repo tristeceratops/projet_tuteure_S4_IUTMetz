@@ -34,14 +34,12 @@ int main() {
     do {
         // on demande à l'utilisateur quel fichier il veut ouvrir
 
-        // printf("saisir le nom de fichier de données : ");
-        // scanf("%s", nom); while(getchar() != '\n');
-        strcpy(nom, "./communes/communes_10.txt");
+        printf("saisir le nom de fichier de données : ");
+        scanf("%s", nom); while(getchar() != '\n');
+        // strcpy(nom, "./communes/communes_10.txt");
         err = lire_data(nom, &G, &nombre_villes, &m);
     }
     while(err == 0);
-
-    nombre_villes = 10;
 
     chemin = calloc(nombre_villes, sizeof(int));
     meilleur_chemin = calloc(nombre_villes, sizeof(int));
@@ -49,13 +47,8 @@ int main() {
     for (int i=0; i<nombre_villes; i++) {
         chemin[i] = i;
     }
-
-
-
-    // force_brute(G, chemin, 0, nombre_villes, meilleur_chemin, INT_MAX);
-
-    // next_permutation(chemin, nombre_villes);
     
+    clock_start(&t1);
 
     while (next_permutation(chemin, nombre_villes)) {
         int poids = poidsMin(G, chemin, nombre_villes);
@@ -66,49 +59,22 @@ int main() {
         }
     }
 
+    clock_end(&t2);
+    print_clock(t1, t2);
+
     affiche(meilleur_chemin, nombre_villes);
     printf("poids%d", valeur_meilleur_chemin);
 
+    FILE * f = fopen("./python/chemin.txt", "w");
 
-    
-    // affiche(chemin, nombre_villes);
+    for (int i=0; i<nombre_villes;i++) {
+        // printf("%d ", meilleur_chemin[i]);
+        fprintf(f, "%d ", meilleur_chemin[i]);
+    }
 
-    // affiche(meilleur_chemin, nombre_villes);
-    // printf("    %d   ", valeur_meilleur_chemin);
+    fclose(f);
 
     return 0;
-}
-
-
-int force_brute(Graphe G, int *chemin, int debut, int nombre_villes, int* meilleur_chemin, int meilleur_valeur) {
-    // int a = 0;
-
-    if (debut == nombre_villes) {
-        affiche(chemin, nombre_villes);
-        
-        printf("%d\n", poidsMin(G, chemin, nombre_villes));
-
-        // if (poidsMin(G, chemin, nombre_villes) < meilleur_valeur) {
-        //     memcpy(meilleur_chemin, chemin, nombre_villes * sizeof(int));
-        //     meilleur_valeur = poidsMin(G, chemin, nombre_villes);
-        // }
-
-        return 1;        
-
-        
-        
-    } else {
-        for (int i=debut; i<nombre_villes; i++) {
-            // force_brute(G, chemin, debut + 1, nombre_villes);
-            swap(chemin, debut, i);
-            force_brute(G, chemin, debut + 1, nombre_villes, meilleur_chemin, meilleur_valeur);
-            swap(chemin, debut, i);
-        }
-
-        
-        // printf("%d \n", a);
-        // printf("meilleure valeuir %d \n", meilleur_valeur);
-    }
 }
 
 void swap(int *chemin, int a, int b) {
@@ -117,9 +83,7 @@ void swap(int *chemin, int a, int b) {
     chemin[b] = temp;
 }
 
-
 int next_permutation(int *array, size_t length) {
-	// Find non-increasing suffix
 	if (length == 0)
 		return 0;
 	size_t i = length - 1;
@@ -128,7 +92,6 @@ int next_permutation(int *array, size_t length) {
 	if (i == 0)
 		return 0;
 	
-	// Find successor to pivot
 	size_t j = length - 1;
 	while (array[j] <= array[i - 1])
 		j--;
@@ -136,7 +99,6 @@ int next_permutation(int *array, size_t length) {
 	array[i - 1] = array[j];
 	array[j] = temp;
 	
-	// Reverse suffix
 	j = length - 1;
 	while (i < j) {
 		temp = array[i];

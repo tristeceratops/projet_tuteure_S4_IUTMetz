@@ -41,7 +41,7 @@ int rnd(int a, int b)
 void permut(int * t, int taille)
 {
 	int i, j, yam;
-	for(i = 0; i < taille-1; i++)
+	for(i = 0; i<taille-1; i++)
 	{
 		j = rnd(i, taille-1);
 		yam = t[i];
